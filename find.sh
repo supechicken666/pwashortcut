@@ -10,6 +10,7 @@ for file in $var
 do
   stop=false
   i=0
+  icon=`grep "Icon=" $file | sed -n '1p' | cut -d "=" -f 2`
   appname=`grep "Name=" $file | sed -n '1p' | cut -d "=" -f 2`
   appname=`echo $appname | sed --expression="s/\-/\_/g"`
   appname=`echo $appname | sed --expression="s/'\\\\''/or/g"`
@@ -50,6 +51,10 @@ do
     echo "    if path.endswith(('.png', 'manifest.json')):" >> $FLASK_APP
     echo "        return send_from_directory('$webpath/templates', path)" >> $FLASK_APP
     echo " " >> $FLASK_APP
+    #######################
+    iconpath=`bash $tools/autogen-icon.sh $icon $CREW_PREFIX $appname`
+    cp $iconpath $PWA_PREFIX/$webpath/templates/icon/brew.png
+    rm $iconpath
     #######################
     echo "localhost:5000/$webpath - $appname" >> ~/deploy.list
     echo "Shortcut for $appname deployed!"
